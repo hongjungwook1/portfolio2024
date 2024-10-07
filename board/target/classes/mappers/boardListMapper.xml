@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="boardList">
+
+	<resultMap id="BoardDtoResultMap" type="BoardDto">
+	    <result property="board_id" 		column="BOARD_ID"/>
+	    <result property="board_company"	column="BOARD_COMPANY"/>
+	    <result property="board_title"		column="BOARD_TITLE"/>
+	    <result property="board_contents"	column="BOARD_CONTENTS"/>
+	    <result property="board_register"	column="BOARD_REGISTER"/>
+	    <result property="board_password"	column="BOARD_PASSWORD"/>
+	    <result property="board_date"		column="BOARD_DATE"/>
+	</resultMap>
+
+
+
+	<select id="selectBoardList" resultMap="BoardDtoResultMap">
+		SELECT 
+				* 
+		FROM 
+				NOTICE_HJW
+		ORDER BY
+				BOARD_ID
+	</select>
+	
+	
+	<select id="selectGetOneBoard" resultMap="BoardDtoResultMap" parameterType="java.lang.Integer">
+		SELECT
+				*
+		FROM
+				NOTICE_HJW
+	 	WHERE 
+	 			BOARD_ID = #{board_id}
+	</select>
+	
+	<select id="searchBoard" resultMap="BoardDtoResultMap">
+		SELECT
+	            BOARD_ID,
+	            BOARD_COMPANY,
+	            BOARD_TITLE,
+	            BOARD_CONTENTS,
+	            BOARD_REGISTER,
+	            BOARD_PASSWORD,
+	            BOARD_DATE
+        FROM
+           		NOTICE_HJW
+        WHERE
+	            BOARD_COMPANY = #{board_company}
+	            AND BOARD_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD') 
+	            AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
+        
+        <if test="board_register != null">
+            AND BOARD_REGISTER LIKE '%' || #{board_register} || '%'
+        </if>
+        
+        <if test="board_title != null">
+            AND BOARD_TITLE LIKE '%' || #{board_title} || '%'
+        </if>
+        ORDER BY BOARD_DATE DESC
+	</select>
+	
+</mapper>
